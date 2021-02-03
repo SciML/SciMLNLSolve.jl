@@ -1,0 +1,4 @@
+name = "SciMLNLSolve"
+uuid = "e9a6253c-8580-4d32-9898-8661bb511710"
+authors = ["Utkarsh <rajpututkarsh530@gmail.com>"]
+version = "0.1.0"
