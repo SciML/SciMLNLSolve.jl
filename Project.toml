@@ -2,3 +2,7 @@ name = "SciMLNLSolve"
 uuid = "e9a6253c-8580-4d32-9898-8661bb511710"
 authors = ["Utkarsh <rajpututkarsh530@gmail.com>"]
 version = "0.1.0"
+
+[deps]
+Reexport = "189a3867-3050-52da-a836-e630ba90ab69"
+SciMLBase = "0bca4576-84f4-4d90-8ffe-ffa030f20462"

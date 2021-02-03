@@ -1,5 +1,6 @@
 module SciMLNLSolve
 
-greet() = print("Hello World!")
+using Reexport
+@reexport using SciMLBase
 
 end # module
