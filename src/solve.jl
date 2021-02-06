@@ -1,6 +1,9 @@
 function SciMLBase.solve(
     prob::Union{SciMLBase.AbstractSteadyStateProblem{uType,isinplace},SciMLBase.AbstractNonlinearProblem{uType,isinplace}},
     alg::algType,
+    reltol=1e-3,
+    abstol=1e-6,
+    maxiters=100000,
     timeseries=[],
     ts=[],
     ks=[],
@@ -16,6 +19,19 @@ function SciMLBase.solve(
 
     sizeu = size(prob.u0)
     p = prob.p
+
+    # unwrapping alg params
+    method = alg.method
+    autodiff = alg.autodiff
+    store_trace = alg.store_trace
+    extended_trace = alg.extended_trace
+    linesearch = alg.linesearch
+    linsolve = alg.linsolve
+    factor = alg.factor
+    autoscale = alg.autoscale
+    m = alg.m
+    beta = alg.beta
+    show_trace = alg.show_trace
 
     ### Fix the more general function to Sundials allowed style
     if typeof(prob.f) <: ODEFunction
@@ -50,10 +66,24 @@ function SciMLBase.solve(
     end
     u = zero(u0)
     resid = similar(u)
-
-    if typeof(alg) <: JuliaNLsolve
-        u = nlsolve(f!, u0).zero
-    end
+    solver = nlsolve(f!, u0,
+                    xtol=reltol,
+                    ftol=abstol,
+                    iterations=maxiters, 
+                    method=method, 
+                    autodiff=autodiff, 
+                    store_trace=store_trace, 
+                    extended_trace=extended_trace, 
+                    linesearch=linesearch, 
+                    linsolve=linsolve, 
+                    factor=factor, 
+                    autoscale=autoscale, 
+                    m=m, 
+                    beta=beta,
+                    show_trace=show_trace,
+                    )
+    u = solver.zero
     f!(resid, u)
-    SciMLBase.build_solution(prob, alg, u, resid;retcode=:Success)
+    retcode = solver.x_converged || solver.f_converged ? :Success : :Failure
+    SciMLBase.build_solution(prob, alg, u, resid;retcode=retcode)
 end
