@@ -1,16 +1,15 @@
-function SciMLBase.solve(
-    prob::Union{SciMLBase.AbstractSteadyStateProblem{uType,isinplace},SciMLBase.AbstractNonlinearProblem{uType,isinplace}},
-    alg::algType,
-    reltol=1e-3,
-    abstol=1e-6,
-    maxiters=100000,
-    timeseries=[],
-    ts=[],
-    ks=[],
-    recompile::Type{Val{recompile_flag}}=Val{true};
-    kwargs...,
-) where {algType <: SciMLNLSolveAlgorithm,recompile_flag,uType,isinplace}
-
+function SciMLBase.solve(prob::Union{SciMLBase.AbstractSteadyStateProblem{uType, isinplace},
+                                     SciMLBase.AbstractNonlinearProblem{uType, isinplace}},
+                         alg::algType,
+                         reltol = 1e-3,
+                         abstol = 1e-6,
+                         maxiters = 100000,
+                         timeseries = [],
+                         ts = [],
+                         ks = [],
+                         recompile::Type{Val{recompile_flag}} = Val{true};
+                         kwargs...) where {algType <: SciMLNLSolveAlgorithm, recompile_flag,
+                                           uType, isinplace}
     if typeof(prob.u0) <: Number
         u0 = [prob.u0]
     else
@@ -46,8 +45,8 @@ function SciMLBase.solve(
             f! = (du, u) -> prob.f(du, u, p, t)
         else # Then it's an in-place function on an abstract array
             f! = (du, u) -> (prob.f(reshape(du, sizeu), reshape(u, sizeu), p, t);
-            du = vec(du);
-            0)
+                             du = vec(du);
+                             0)
         end
     elseif typeof(prob.f) <: NonlinearFunction
         if !isinplace && typeof(prob.u0) <: Number
@@ -60,30 +59,29 @@ function SciMLBase.solve(
             f! = (du, u) -> prob.f(du, u, p)
         else # Then it's an in-place function on an abstract array
             f! = (du, u) -> (prob.f(reshape(du, sizeu), reshape(u, sizeu), p);
-            du = vec(du);
-            0)
+                             du = vec(du);
+                             0)
         end
     end
     u = zero(u0)
     resid = similar(u)
     solver = nlsolve(f!, u0,
-                    xtol=reltol,
-                    ftol=abstol,
-                    iterations=maxiters, 
-                    method=method, 
-                    autodiff=autodiff, 
-                    store_trace=store_trace, 
-                    extended_trace=extended_trace, 
-                    linesearch=linesearch, 
-                    linsolve=linsolve, 
-                    factor=factor, 
-                    autoscale=autoscale, 
-                    m=m, 
-                    beta=beta,
-                    show_trace=show_trace,
-                    )
+                     xtol = reltol,
+                     ftol = abstol,
+                     iterations = maxiters,
+                     method = method,
+                     autodiff = autodiff,
+                     store_trace = store_trace,
+                     extended_trace = extended_trace,
+                     linesearch = linesearch,
+                     linsolve = linsolve,
+                     factor = factor,
+                     autoscale = autoscale,
+                     m = m,
+                     beta = beta,
+                     show_trace = show_trace)
     u = solver.zero
     f!(resid, u)
     retcode = solver.x_converged || solver.f_converged ? :Success : :Failure
-    SciMLBase.build_solution(prob, alg, u, resid;retcode=retcode)
+    SciMLBase.build_solution(prob, alg, u, resid; retcode = retcode)
 end

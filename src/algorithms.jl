@@ -1,6 +1,6 @@
 abstract type SciMLNLSolveAlgorithm end
 
-struct NLSolveJL{LSH,LS} <: SciMLNLSolveAlgorithm
+struct NLSolveJL{LSH, LS} <: SciMLNLSolveAlgorithm
     # Refer for tuning parameter choices: https://github.com/JuliaNLSolvers/NLsolve.jl#automatic-differentiation
     method::Symbol
     autodiff::Symbol
@@ -18,21 +18,19 @@ struct NLSolveJL{LSH,LS} <: SciMLNLSolveAlgorithm
 end
 
 function NLSolveJL(;
-                    method=:trust_region,
-                    autodiff=:central,
-                    store_trace=false,
-                    extended_trace=false,
-                    linesearch=LineSearches.Static(),
-                    linsolve=(x, A, b) -> copyto!(x, A\b),
-                    factor = one(Float64),
-                    autoscale=true,
-                    m=10,
-                    beta=one(Float64),
-                    show_trace=false,
-                 )
-    NLSolveJL{typeof(linesearch),typeof(linsolve)}(
-        method, autodiff, store_trace, extended_trace, linesearch, linsolve,factor, autoscale, m, beta,show_trace)
+                   method = :trust_region,
+                   autodiff = :central,
+                   store_trace = false,
+                   extended_trace = false,
+                   linesearch = LineSearches.Static(),
+                   linsolve = (x, A, b) -> copyto!(x, A \ b),
+                   factor = one(Float64),
+                   autoscale = true,
+                   m = 10,
+                   beta = one(Float64),
+                   show_trace = false)
+    NLSolveJL{typeof(linesearch), typeof(linsolve)}(method, autodiff, store_trace,
+                                                    extended_trace, linesearch, linsolve,
+                                                    factor, autoscale, m, beta, show_trace)
 end
-struct CMINPACK <: SciMLNLSolveAlgorithm
-    
-end
+struct CMINPACK <: SciMLNLSolveAlgorithm end
