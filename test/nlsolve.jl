@@ -20,7 +20,7 @@ for alg in [NLSolveJL()]
 end
 
 # OOP Tests
-f_oop(u, p, t) = [2 - 2u[1],u[1] - 4u[2]]
+f_oop(u, p, t) = [2 - 2u[1], u[1] - 4u[2]]
 u0 = zeros(2)
 prob_oop = SteadyStateProblem(f_oop, u0)
 
@@ -54,10 +54,10 @@ for alg in [NLSolveJL()]
 end
 
 # OOP Tests
-f_oop(u, p) = [2 - 2u[1],u[1] - 4u[2]]
+f_oop(u, p) = [2 - 2u[1], u[1] - 4u[2]]
 u0 = zeros(2)
 prob_oop = NonlinearProblem{false}(f_oop, u0)
-for alg in [NLSolveJL(),]
+for alg in [NLSolveJL()]
     local sol
     sol = solve(prob_oop, alg)
     @test sol.retcode == :Success
