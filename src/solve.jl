@@ -63,24 +63,50 @@ function SciMLBase.solve(prob::Union{SciMLBase.AbstractSteadyStateProblem{uType,
                              0)
         end
     end
-    u = zero(u0)
-    resid = similar(u0)
 
-    original = nlsolve(f!, u0,
-                       xtol = reltol,
-                       ftol = abstol,
-                       iterations = maxiters,
-                       method = method,
-                       autodiff = autodiff,
-                       store_trace = store_trace,
-                       extended_trace = extended_trace,
-                       linesearch = linesearch,
-                       linsolve = linsolve,
-                       factor = factor,
-                       autoscale = autoscale,
-                       m = m,
-                       beta = beta,
-                       show_trace = show_trace)
+    resid = similar(u0)
+    f!(resid, u0)
+
+    if SciMLBase.has_jac(prob.f)
+        if !isinplace && typeof(prob.u0) <: Number
+            g! = (du, u) -> (du .= prob.jac(first(u), p); Cint(0))
+        elseif !isinplace && typeof(prob.u0) <: Vector{Float64}
+            g! = (du, u) -> (du .= prob.jac(u, p); Cint(0))
+        elseif !isinplace && typeof(prob.u0) <: AbstractArray
+            g! = (du, u) -> (du .= vec(prob.jac(reshape(u, sizeu), p)); Cint(0))
+        elseif typeof(prob.u0) <: Vector{Float64}
+            g! = (du, u) -> prob.jac(du, u, p)
+        else # Then it's an in-place function on an abstract array
+            g! = (du, u) -> (prob.jac(reshape(du, sizeu), reshape(u, sizeu), p);
+                             du = vec(du);
+                             0)
+        end
+        if prob.f.jac_prototype !== nothing
+            J = zero(prob.f.jac_prototype)
+            df = OnceDifferentiable(f!, g!, u0, resid, J)
+        else
+            df = OnceDifferentiable(f!, g!, u0, resid)
+        end
+    else
+        df = OnceDifferentiable(f!, u0, resid)
+    end
+
+    original = nlsolve(df, u0,
+                        xtol = reltol,
+                        ftol = abstol,
+                        iterations = maxiters,
+                        method = method,
+                        autodiff = autodiff,
+                        store_trace = store_trace,
+                        extended_trace = extended_trace,
+                        linesearch = linesearch,
+                        linsolve = linsolve,
+                        factor = factor,
+                        autoscale = autoscale,
+                        m = m,
+                        beta = beta,
+                        show_trace = show_trace)
+
     u = reshape(original.zero, size(u))
     f!(resid, u)
     retcode = original.x_converged || original.f_converged ? ReturnCode.Success :
