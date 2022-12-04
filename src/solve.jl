@@ -64,8 +64,9 @@ function SciMLBase.solve(prob::Union{SciMLBase.AbstractSteadyStateProblem{uType,
         end
     end
     u = zero(u0)
-    resid = similar(u)
-    solver = nlsolve(f!, u0,
+    resid = similar(u0)
+
+    original = nlsolve(f!, u0,
                      xtol = reltol,
                      ftol = abstol,
                      iterations = maxiters,
@@ -80,8 +81,9 @@ function SciMLBase.solve(prob::Union{SciMLBase.AbstractSteadyStateProblem{uType,
                      m = m,
                      beta = beta,
                      show_trace = show_trace)
-    u = solver.zero
+    u = reshape(original.zero, size(u))
     f!(resid, u)
-    retcode = solver.x_converged || solver.f_converged ? :Success : :Failure
-    SciMLBase.build_solution(prob, alg, u, resid; retcode = retcode)
+    retcode = original.x_converged || original.f_converged ? ReturnCode.Success : ReturnCode.Failure
+    SciMLBase.build_solution(prob, alg, u, resid; retcode = retcode,
+    original = original)
 end

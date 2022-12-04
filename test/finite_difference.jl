@@ -1,4 +1,5 @@
-using SciMLNLSolve, SciMLBase
+using SciMLNLSolve, Test
+
 # Test the finite differencing technique
 function f!(fvec, x, p)
     fvec[1] = (x[1] + 3) * (x[2]^3 - 7) + 18

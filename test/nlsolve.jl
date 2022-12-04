@@ -1,4 +1,4 @@
-using SciMLNLSolve, SciMLBase
+using SciMLNLSolve, Test
 
 # IIP Tests
 function f_iip(du, u, p, t)
@@ -11,7 +11,7 @@ abstol = 1e-8
 
 for alg in [NLSolveJL()]
     sol = solve(prob_iip, alg)
-    @test sol.retcode == :Success
+    @test sol.retcode == ReturnCode.Success
     p = nothing
 
     du = zeros(2)
@@ -26,7 +26,7 @@ prob_oop = SteadyStateProblem(f_oop, u0)
 
 for alg in [NLSolveJL()]
     sol = solve(prob_oop, alg)
-    @test sol.retcode == :Success
+    @test sol.retcode == ReturnCode.Success
 
     du = zeros(2)
     du = f_oop(sol.u, nothing, 0)
@@ -45,7 +45,7 @@ abstol = 1e-8
 for alg in [NLSolveJL()]
     local sol
     sol = solve(prob_iip, alg)
-    @test sol.retcode == :Success
+    @test sol.retcode == ReturnCode.Success
     p = nothing
 
     du = zeros(2)
@@ -60,7 +60,7 @@ prob_oop = NonlinearProblem{false}(f_oop, u0)
 for alg in [NLSolveJL()]
     local sol
     sol = solve(prob_oop, alg)
-    @test sol.retcode == :Success
+    @test sol.retcode == ReturnCode.Success
 
     du = zeros(2)
     du = f_oop(sol.u, nothing)
