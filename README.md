@@ -5,12 +5,7 @@
 [![Coverage Status](https://coveralls.io/repos/github/SciML/SciMLNLSolve.jl/badge.svg)](https://coveralls.io/github/SciML/SciMLNLSolve.jl)
 [![codecov.io](http://codecov.io/github/SciML/SciMLNLSolve.jl/coverage.svg?branch=master)](http://codecov.io/github/SciML/SciMLNLSolve.jl?branch=master)
 
-SciMLNLSolve.jl is a wrapper library for bringing external Julia nonlinear solver
-libraries into the SciML common interface. With this you can currently
-add the following libraries to your nonlinear solving:
-
-- [NLsolve.jl](https://github.com/JuliaNLSolvers/NLsolve.jl)
-- [MINPACK.jl](https://github.com/sglyon/MINPACK.jl)
-
-## Example
-
+SciMLNLSolve.jl is a wrapper library for bringing
+[NLsolve.jl](https://github.com/JuliaNLSolvers/NLsolve.jl) into the SciML common interface
+for use with NonlinearSolve.jl. For more information on using this library, consult the
+documentation for [NonlinearSolve.jl](https://docs.sciml.ai/NonlinearSolve/stable/).

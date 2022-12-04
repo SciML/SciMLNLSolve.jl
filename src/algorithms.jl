@@ -33,4 +33,3 @@ function NLSolveJL(;
                                                     extended_trace, linesearch, linsolve,
                                                     factor, autoscale, m, beta, show_trace)
 end
-struct CMINPACK <: SciMLNLSolveAlgorithm end
