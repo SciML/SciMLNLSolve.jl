@@ -15,7 +15,7 @@ LineSearches = "7"
 MINPACK = "1"
 NLsolve = "4"
 Reexport = "1.0"
-SciMLBase = "1"
+SciMLBase = "1.73"
 julia = "1.6"
 
 [extras]
