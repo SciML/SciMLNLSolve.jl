@@ -82,6 +82,6 @@ function SciMLBase.solve(prob::Union{SciMLBase.AbstractSteadyStateProblem{uType,
                      show_trace = show_trace)
     u = solver.zero
     f!(resid, u)
-    retcode = solver.x_converged || solver.f_converged ? :Success : :Failure
+    retcode = solver.x_converged || solver.f_converged ? ReturnCode.Success : ReturnCode.Failure
     SciMLBase.build_solution(prob, alg, u, resid; retcode = retcode)
 end
