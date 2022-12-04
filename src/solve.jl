@@ -83,12 +83,12 @@ function SciMLBase.solve(prob::Union{SciMLBase.AbstractSteadyStateProblem{uType,
         end
         if prob.f.jac_prototype !== nothing
             J = zero(prob.f.jac_prototype)
-            df = OnceDifferentiable(f!, g!, u0, resid, J)
+            df = OnceDifferentiable(f!, g!, u0, resid, J, autodiff = autodiff)
         else
-            df = OnceDifferentiable(f!, g!, u0, resid)
+            df = OnceDifferentiable(f!, g!, u0, resid, autodiff = autodiff)
         end
     else
-        df = OnceDifferentiable(f!, u0, resid)
+        df = OnceDifferentiable(f!, u0, resid, autodiff = autodiff)
     end
 
     original = nlsolve(df, u0,
@@ -96,7 +96,6 @@ function SciMLBase.solve(prob::Union{SciMLBase.AbstractSteadyStateProblem{uType,
                        ftol = abstol,
                        iterations = maxiters,
                        method = method,
-                       autodiff = autodiff,
                        store_trace = store_trace,
                        extended_trace = extended_trace,
                        linesearch = linesearch,
@@ -107,7 +106,7 @@ function SciMLBase.solve(prob::Union{SciMLBase.AbstractSteadyStateProblem{uType,
                        beta = beta,
                        show_trace = show_trace)
 
-    u = reshape(original.zero, size(u))
+    u = reshape(original.zero, size(u0))
     f!(resid, u)
     retcode = original.x_converged || original.f_converged ? ReturnCode.Success :
               ReturnCode.Failure
