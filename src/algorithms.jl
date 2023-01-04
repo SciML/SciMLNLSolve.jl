@@ -8,7 +8,7 @@ NLSolveJL(;
           store_trace=false,
           extended_trace=false,
           linesearch=LineSearches.Static(),
-          linsolve=(x, A, b) -> copyto!(x, A\b),
+          linsolve=(x, A, b) -> copyto!(x, A\\b),
           factor = one(Float64),
           autoscale=true,
           m=10,
@@ -31,7 +31,7 @@ NLSolveJL(;
   [LineSearches.jl](https://github.com/JuliaNLSolvers/LineSearches.jl). Defaults to
   `LineSearches.Static()`.
 - `linsolve`: a function `linsolve(x, A, b)` that solves `Ax = b`. Defaults to using Julia's
-  `\`.
+  `\\`.
 - `factor``: determines the size of the initial trust region. This size is set to the
   product of factor and the euclidean norm of `u0` if nonzero, or else to factor itself.
   Default: 1.0.
