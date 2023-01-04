@@ -24,7 +24,7 @@ NLSolveJL(;
   central differencing via FiniteDiff.jl. The other choices are `:forward`
 - `show_trace`: should a trace of the optimization algorithm's state be shown on STDOUT?
   Default: false.
-- `extended_trace`: should additifonal algorithm internals be added to the state trace?
+- `extended_trace`: should additional algorithm internals be added to the state trace?
   Default: false.
 - `linesearch`: the line search method to be used within the solver method. The choices
   are line search types from
