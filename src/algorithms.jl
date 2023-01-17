@@ -67,10 +67,10 @@ struct NLSolveJL{LSH, LS} <: SciMLNLSolveAlgorithm
     linsolve::LS
     factor::Real
     autoscale::Bool
-    m::Integer
+    m::Int
     beta::Real
     show_trace::Bool
-    # aa_start::Integer
+    # aa_start::Int
     # droptol::Real
 end
 
