@@ -1,4 +1,4 @@
-function SciMLBase.solve(prob::Union{SciMLBase.AbstractSteadyStateProblem,
+function SciMLBase.__solve(prob::Union{SciMLBase.AbstractSteadyStateProblem,
                                      SciMLBase.AbstractNonlinearProblem},
                          alg::algType,
                          reltol = 1e-3,

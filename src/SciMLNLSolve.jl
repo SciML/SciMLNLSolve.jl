@@ -3,6 +3,7 @@ module SciMLNLSolve
 using Reexport
 using NLsolve
 using LineSearches
+using DiffEqBase
 
 @reexport using SciMLBase
 include("algorithms.jl")
