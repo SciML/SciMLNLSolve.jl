@@ -14,7 +14,7 @@ function SciMLBase.solve(prob::Union{SciMLBase.AbstractSteadyStateProblem,
     else
         u0 = deepcopy(prob.u0)
     end
-  
+
     iip = isinplace(prob)
 
     sizeu = size(prob.u0)
