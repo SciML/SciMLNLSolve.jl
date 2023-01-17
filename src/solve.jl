@@ -1,5 +1,5 @@
-function SciMLBase.solve(prob::Union{SciMLBase.AbstractSteadyStateProblem{uType, isinplace},
-                                     SciMLBase.AbstractNonlinearProblem{uType, isinplace}},
+function SciMLBase.solve(prob::Union{SciMLBase.AbstractSteadyStateProblem,
+                                     SciMLBase.AbstractNonlinearProblem},
                          alg::algType,
                          reltol = 1e-3,
                          abstol = 1e-6,
@@ -8,13 +8,14 @@ function SciMLBase.solve(prob::Union{SciMLBase.AbstractSteadyStateProblem{uType,
                          ts = [],
                          ks = [],
                          recompile::Type{Val{recompile_flag}} = Val{true};
-                         kwargs...) where {algType <: SciMLNLSolveAlgorithm, recompile_flag,
-                                           uType, isinplace}
+                         kwargs...) where {algType <: SciMLNLSolveAlgorithm, recompile_flag}
     if typeof(prob.u0) <: Number
         u0 = [prob.u0]
     else
         u0 = deepcopy(prob.u0)
     end
+  
+    iip = isinplace(prob)
 
     sizeu = size(prob.u0)
     p = prob.p
@@ -35,11 +36,11 @@ function SciMLBase.solve(prob::Union{SciMLBase.AbstractSteadyStateProblem{uType,
     ### Fix the more general function to Sundials allowed style
     if typeof(prob.f) <: ODEFunction
         t = Inf
-        if !isinplace && typeof(prob.u0) <: Number
+        if !iip && typeof(prob.u0) <: Number
             f! = (du, u) -> (du .= prob.f(first(u), p, t); Cint(0))
-        elseif !isinplace && typeof(prob.u0) <: Vector{Float64}
+        elseif !iip && typeof(prob.u0) <: Vector{Float64}
             f! = (du, u) -> (du .= prob.f(u, p, t); Cint(0))
-        elseif !isinplace && typeof(prob.u0) <: AbstractArray
+        elseif !iip && typeof(prob.u0) <: AbstractArray
             f! = (du, u) -> (du .= vec(prob.f(reshape(u, sizeu), p, t)); Cint(0))
         elseif typeof(prob.u0) <: Vector{Float64}
             f! = (du, u) -> prob.f(du, u, p, t)
@@ -49,11 +50,11 @@ function SciMLBase.solve(prob::Union{SciMLBase.AbstractSteadyStateProblem{uType,
                              0)
         end
     elseif typeof(prob.f) <: NonlinearFunction
-        if !isinplace && typeof(prob.u0) <: Number
+        if !iip && typeof(prob.u0) <: Number
             f! = (du, u) -> (du .= prob.f(first(u), p); Cint(0))
-        elseif !isinplace && typeof(prob.u0) <: Vector{Float64}
+        elseif !iip && typeof(prob.u0) <: Vector{Float64}
             f! = (du, u) -> (du .= prob.f(u, p); Cint(0))
-        elseif !isinplace && typeof(prob.u0) <: AbstractArray
+        elseif !iip && typeof(prob.u0) <: AbstractArray
             f! = (du, u) -> (du .= vec(prob.f(reshape(u, sizeu), p)); Cint(0))
         elseif typeof(prob.u0) <: Vector{Float64}
             f! = (du, u) -> prob.f(du, u, p)
@@ -68,11 +69,11 @@ function SciMLBase.solve(prob::Union{SciMLBase.AbstractSteadyStateProblem{uType,
     f!(resid, u0)
 
     if SciMLBase.has_jac(prob.f)
-        if !isinplace && typeof(prob.u0) <: Number
+        if !iip && typeof(prob.u0) <: Number
             g! = (du, u) -> (du .= prob.jac(first(u), p); Cint(0))
-        elseif !isinplace && typeof(prob.u0) <: Vector{Float64}
+        elseif !iip && typeof(prob.u0) <: Vector{Float64}
             g! = (du, u) -> (du .= prob.jac(u, p); Cint(0))
-        elseif !isinplace && typeof(prob.u0) <: AbstractArray
+        elseif !iip && typeof(prob.u0) <: AbstractArray
             g! = (du, u) -> (du .= vec(prob.jac(reshape(u, sizeu), p)); Cint(0))
         elseif typeof(prob.u0) <: Vector{Float64}
             g! = (du, u) -> prob.jac(du, u, p)
