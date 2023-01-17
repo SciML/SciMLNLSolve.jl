@@ -1,4 +1,4 @@
-abstract type SciMLNLSolveAlgorithm end
+abstract type SciMLNLSolveAlgorithm <: SciMLBase.AbstractNonlinearAlgorithm end
 
 """
 ```julia
