@@ -2,9 +2,8 @@ function SciMLBase.__solve(prob::Union{SciMLBase.AbstractSteadyStateProblem,
                                        SciMLBase.AbstractNonlinearProblem},
                            alg::algType,
                            args...;
-                           xtol = 0.,
                            abstol = 1e-6,
-                           maxiters = 100000,
+                           maxiters = 1000,
                            kwargs...) where {algType <: SciMLNLSolveAlgorithm}
     if typeof(prob.u0) <: Number
         u0 = [prob.u0]
