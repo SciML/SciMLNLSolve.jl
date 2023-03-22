@@ -66,3 +66,11 @@ for alg in [NLSolveJL()]
     du = f_oop(sol.u, nothing)
     @test maximum(du) < 1e-6
 end
+
+# tolerance tests
+f_tol(u,p) = u^2 - 2
+prob_tol = NonlinearProblem(f_tol, 1.)
+for tol in [1e-1, 1e-3, 1e-6, 1e-10, 1e-15]
+    sol = solve(prob_tol, NLSolveJL(), abstol=tol, reltol=0.)
+    @test abs(sol.u[1] - sqrt(2)) < tol
+end

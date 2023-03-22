@@ -2,7 +2,7 @@ function SciMLBase.__solve(prob::Union{SciMLBase.AbstractSteadyStateProblem,
                                        SciMLBase.AbstractNonlinearProblem},
                            alg::algType,
                            args...;
-                           reltol = 1e-3,
+                           xtol = 0.,
                            abstol = 1e-6,
                            maxiters = 100000,
                            kwargs...) where {algType <: SciMLNLSolveAlgorithm}
@@ -90,7 +90,7 @@ function SciMLBase.__solve(prob::Union{SciMLBase.AbstractSteadyStateProblem,
     end
 
     original = nlsolve(df, u0,
-                       xtol = reltol,
+                       xtol = xtol,
                        ftol = abstol,
                        iterations = maxiters,
                        method = method,
