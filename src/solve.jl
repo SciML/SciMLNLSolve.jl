@@ -1,15 +1,10 @@
 function SciMLBase.__solve(prob::Union{SciMLBase.AbstractSteadyStateProblem,
                                        SciMLBase.AbstractNonlinearProblem},
                            alg::algType,
-                           reltol = 1e-3,
+                           args...;
                            abstol = 1e-6,
-                           maxiters = 100000,
-                           timeseries = [],
-                           ts = [],
-                           ks = [],
-                           recompile::Type{Val{recompile_flag}} = Val{true};
-                           kwargs...) where {algType <: SciMLNLSolveAlgorithm,
-                                             recompile_flag}
+                           maxiters = 1000,
+                           kwargs...) where {algType <: SciMLNLSolveAlgorithm}
     if typeof(prob.u0) <: Number
         u0 = [prob.u0]
     else
@@ -94,7 +89,6 @@ function SciMLBase.__solve(prob::Union{SciMLBase.AbstractSteadyStateProblem,
     end
 
     original = nlsolve(df, u0,
-                       xtol = reltol,
                        ftol = abstol,
                        iterations = maxiters,
                        method = method,
