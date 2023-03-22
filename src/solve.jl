@@ -89,7 +89,6 @@ function SciMLBase.__solve(prob::Union{SciMLBase.AbstractSteadyStateProblem,
     end
 
     original = nlsolve(df, u0,
-                       xtol = xtol,
                        ftol = abstol,
                        iterations = maxiters,
                        method = method,
