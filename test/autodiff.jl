@@ -1,4 +1,4 @@
-using SciMLNLSolve, Test
+using SciMLNLSolve, LinearAlgebra, Test
 
 # Test the autodiff technique
 function f!(fvec, x, p)
