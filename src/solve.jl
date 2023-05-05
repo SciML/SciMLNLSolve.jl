@@ -66,23 +66,23 @@ function SciMLBase.__solve(prob::Union{SciMLBase.AbstractSteadyStateProblem,
 
     if SciMLBase.has_jac(prob.f)
         if !iip && typeof(prob.u0) <: Number
-            g! = (du, u) -> (du .= prob.jac(first(u), p); Cint(0))
+            g! = (du, u) -> (du .= prob.f.jac(first(u), p); Cint(0))
         elseif !iip && typeof(prob.u0) <: Vector{Float64}
-            g! = (du, u) -> (du .= prob.jac(u, p); Cint(0))
+            g! = (du, u) -> (du .= prob.f.jac(u, p); Cint(0))
         elseif !iip && typeof(prob.u0) <: AbstractArray
-            g! = (du, u) -> (du .= vec(prob.jac(reshape(u, sizeu), p)); Cint(0))
+            g! = (du, u) -> (du .= vec(prob.f.jac(reshape(u, sizeu), p)); Cint(0))
         elseif typeof(prob.u0) <: Vector{Float64}
-            g! = (du, u) -> prob.jac(du, u, p)
+            g! = (du, u) -> prob.f.jac(du, u, p)
         else # Then it's an in-place function on an abstract array
-            g! = (du, u) -> (prob.jac(reshape(du, sizeu), reshape(u, sizeu), p);
+            g! = (du, u) -> (prob.f.jac(reshape(du, sizeu), reshape(u, sizeu), p);
                              du = vec(du);
                              0)
         end
         if prob.f.jac_prototype !== nothing
             J = zero(prob.f.jac_prototype)
-            df = OnceDifferentiable(f!, g!, u0, resid, J, autodiff = autodiff)
+            df = OnceDifferentiable(f!, g!, u0, resid, J)
         else
-            df = OnceDifferentiable(f!, g!, u0, resid, autodiff = autodiff)
+            df = OnceDifferentiable(f!, g!, u0, resid)
         end
     else
         df = OnceDifferentiable(f!, u0, resid, autodiff = autodiff)
