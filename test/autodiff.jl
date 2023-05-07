@@ -44,4 +44,4 @@ sol = solve(ProbN, NLSolveJL(), reltol = 1e-8, abstol = 1e-8)
 
 init = ones(Complex{Float64},152);
 ProbN = NonlinearProblem(f,init,p)
-sol = solve(ProbN,NLSolveJL(linesearch = HagerZhang(),method = :newton), reltol = 1e-8,abstol = 1e-8)
+sol = solve(ProbN,NLSolveJL(), reltol = 1e-8,abstol = 1e-8)
