@@ -67,11 +67,11 @@ function SciMLBase.__solve(prob::Union{SciMLBase.AbstractSteadyStateProblem,
     if SciMLBase.has_jac(prob.f)
         if !iip && typeof(prob.u0) <: Number
             g! = (du, u) -> (du .= prob.f.jac(first(u), p); Cint(0))
-        elseif !iip && typeof(prob.u0) <: Vector{Float64}
+        elseif !iip && typeof(prob.u0) <: Vector{T} where T <: Number
             g! = (du, u) -> (du .= prob.f.jac(u, p); Cint(0))
         elseif !iip && typeof(prob.u0) <: AbstractArray
             g! = (du, u) -> (du .= vec(prob.f.jac(reshape(u, sizeu), p)); Cint(0))
-        elseif typeof(prob.u0) <: Vector{Float64}
+        elseif typeof(prob.u0) <: Vector{T} where T <: Number
             g! = (du, u) -> prob.f.jac(du, u, p)
         else # Then it's an in-place function on an abstract array
             g! = (du, u) -> (prob.f.jac(reshape(du, sizeu), reshape(u, sizeu), p);
