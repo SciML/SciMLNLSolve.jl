@@ -1,7 +1,7 @@
 name = "SciMLNLSolve"
 uuid = "e9a6253c-8580-4d32-9898-8661bb511710"
 authors = ["SciML"]
-version = "0.1.5"
+version = "0.1.6"
 
 [deps]
 DiffEqBase = "2b5f629d-d688-5b77-993f-72d75c75574e"
