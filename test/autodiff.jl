@@ -41,3 +41,15 @@ p = A
 
 ProbN = NonlinearProblem(f, init, p)
 sol = solve(ProbN, NLSolveJL(), reltol = 1e-8, abstol = 1e-8)
+
+function f!(F,x)
+    F[1:152] = x .^2 .- 0.8
+end
+
+function j!(J,x)
+    J[1:152,1:152] = diagm(2 .* x)
+end
+
+x0 = ones(ComplexF64,152)
+
+nlsolve(f!,j!,x0, method = :newton)
