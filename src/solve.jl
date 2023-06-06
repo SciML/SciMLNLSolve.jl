@@ -1,10 +1,10 @@
 function SciMLBase.__solve(prob::Union{SciMLBase.AbstractSteadyStateProblem,
-                                       SciMLBase.AbstractNonlinearProblem},
-                           alg::algType,
-                           args...;
-                           abstol = 1e-6,
-                           maxiters = 1000,
-                           kwargs...) where {algType <: SciMLNLSolveAlgorithm}
+        SciMLBase.AbstractNonlinearProblem},
+    alg::algType,
+    args...;
+    abstol = 1e-6,
+    maxiters = 1000,
+    kwargs...) where {algType <: SciMLNLSolveAlgorithm}
     if typeof(prob.u0) <: Number
         u0 = [prob.u0]
     else
@@ -42,8 +42,8 @@ function SciMLBase.__solve(prob::Union{SciMLBase.AbstractSteadyStateProblem,
             f! = (du, u) -> prob.f(du, u, p, t)
         else # Then it's an in-place function on an abstract array
             f! = (du, u) -> (prob.f(reshape(du, sizeu), reshape(u, sizeu), p, t);
-                             du = vec(du);
-                             0)
+            du = vec(du);
+            0)
         end
     elseif typeof(prob.f) <: NonlinearFunction
         if !iip && typeof(prob.u0) <: Number
@@ -56,8 +56,8 @@ function SciMLBase.__solve(prob::Union{SciMLBase.AbstractSteadyStateProblem,
             f! = (du, u) -> prob.f(du, u, p)
         else # Then it's an in-place function on an abstract array
             f! = (du, u) -> (prob.f(reshape(du, sizeu), reshape(u, sizeu), p);
-                             du = vec(du);
-                             0)
+            du = vec(du);
+            0)
         end
     end
 
@@ -67,16 +67,16 @@ function SciMLBase.__solve(prob::Union{SciMLBase.AbstractSteadyStateProblem,
     if SciMLBase.has_jac(prob.f)
         if !iip && typeof(prob.u0) <: Number
             g! = (du, u) -> (du .= prob.f.jac(first(u), p); Cint(0))
-        elseif !iip && typeof(prob.u0) <: Vector{T} where T <: Number
+        elseif !iip && typeof(prob.u0) <: Vector{T} where {T <: Number}
             g! = (du, u) -> (du .= prob.f.jac(u, p); Cint(0))
         elseif !iip && typeof(prob.u0) <: AbstractArray
             g! = (du, u) -> (du .= vec(prob.f.jac(reshape(u, sizeu), p)); Cint(0))
-        elseif typeof(prob.u0) <: Vector{T} where T <: Number
+        elseif typeof(prob.u0) <: Vector{T} where {T <: Number}
             g! = (du, u) -> prob.f.jac(du, u, p)
         else # Then it's an in-place function on an abstract array
             g! = (du, u) -> (prob.f.jac(reshape(du, sizeu), reshape(u, sizeu), p);
-                             du = vec(du);
-                             0)
+            du = vec(du);
+            0)
         end
         if prob.f.jac_prototype !== nothing
             J = zero(prob.f.jac_prototype)
@@ -89,23 +89,23 @@ function SciMLBase.__solve(prob::Union{SciMLBase.AbstractSteadyStateProblem,
     end
 
     original = nlsolve(df, u0,
-                       ftol = abstol,
-                       iterations = maxiters,
-                       method = method,
-                       store_trace = store_trace,
-                       extended_trace = extended_trace,
-                       linesearch = linesearch,
-                       linsolve = linsolve,
-                       factor = factor,
-                       autoscale = autoscale,
-                       m = m,
-                       beta = beta,
-                       show_trace = show_trace)
+        ftol = abstol,
+        iterations = maxiters,
+        method = method,
+        store_trace = store_trace,
+        extended_trace = extended_trace,
+        linesearch = linesearch,
+        linsolve = linsolve,
+        factor = factor,
+        autoscale = autoscale,
+        m = m,
+        beta = beta,
+        show_trace = show_trace)
 
     u = reshape(original.zero, size(u0))
     f!(resid, u)
     retcode = original.x_converged || original.f_converged ? ReturnCode.Success :
               ReturnCode.Failure
     SciMLBase.build_solution(prob, alg, u, resid; retcode = retcode,
-                             original = original)
+        original = original)
 end
