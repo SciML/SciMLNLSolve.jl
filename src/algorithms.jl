@@ -75,18 +75,18 @@ struct NLSolveJL{LSH, LS} <: SciMLNLSolveAlgorithm
 end
 
 function NLSolveJL(;
-                   method = :trust_region,
-                   autodiff = :central,
-                   store_trace = false,
-                   extended_trace = false,
-                   linesearch = LineSearches.Static(),
-                   linsolve = (x, A, b) -> copyto!(x, A \ b),
-                   factor = one(Float64),
-                   autoscale = true,
-                   m = 10,
-                   beta = one(Float64),
-                   show_trace = false)
+    method = :trust_region,
+    autodiff = :central,
+    store_trace = false,
+    extended_trace = false,
+    linesearch = LineSearches.Static(),
+    linsolve = (x, A, b) -> copyto!(x, A \ b),
+    factor = one(Float64),
+    autoscale = true,
+    m = 10,
+    beta = one(Float64),
+    show_trace = false)
     NLSolveJL{typeof(linesearch), typeof(linsolve)}(method, autodiff, store_trace,
-                                                    extended_trace, linesearch, linsolve,
-                                                    factor, autoscale, m, beta, show_trace)
+        extended_trace, linesearch, linsolve,
+        factor, autoscale, m, beta, show_trace)
 end
