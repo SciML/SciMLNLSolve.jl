@@ -27,6 +27,9 @@ prob_oop = SteadyStateProblem(f_oop, u0)
 for alg in [NLSolveJL()]
     sol = solve(prob_oop, alg)
     @test sol.retcode == ReturnCode.Success
+    # test the solver is doing reasonable things for linear solve
+    # and that the stats are working properly
+    @test 1 <= sol.stats.nf < 10
 
     du = zeros(2)
     du = f_oop(sol.u, nothing, 0)

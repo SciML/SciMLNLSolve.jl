@@ -106,6 +106,11 @@ function SciMLBase.__solve(prob::Union{SciMLBase.AbstractSteadyStateProblem,
     f!(resid, u)
     retcode = original.x_converged || original.f_converged ? ReturnCode.Success :
               ReturnCode.Failure
+    stats = SciMLBase.NLStats(original.f_calls,
+        original.g_calls,
+        original.g_calls,
+        original.g_calls,
+        original.iterations)
     SciMLBase.build_solution(prob, alg, u, resid; retcode = retcode,
-        original = original)
+        original = original, stats = stats)
 end
