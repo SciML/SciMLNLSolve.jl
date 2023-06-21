@@ -49,8 +49,8 @@ NLSolveJL(;
 
 Choices for methods in `NLSolveJL`:
 
-- `:fixedpoint`: Fixed-point iteration
 - `:anderson`: Anderson-accelerated fixed-point iteration
+- `:broyden`: Broyden's quasi-Newton method
 - `:newton`: Classical Newton method with an optional line search
 - `:trust_region`: Trust region Newton method (the default choice)
 
