@@ -5,7 +5,7 @@ function SciMLBase.__solve(prob::Union{SciMLBase.AbstractSteadyStateProblem,
     abstol = 1e-6,
     maxiters = 1000,
     kwargs...) where {algType <: SciMLNLSolveAlgorithm}
-    if typeof(prob.u0) <: Number
+    if prob.u0 isa Number
         u0 = [prob.u0]
     else
         u0 = deepcopy(prob.u0)
@@ -30,29 +30,29 @@ function SciMLBase.__solve(prob::Union{SciMLBase.AbstractSteadyStateProblem,
     show_trace = alg.show_trace
 
     ### Fix the more general function to Sundials allowed style
-    if typeof(prob.f) <: ODEFunction
+    if prob.f isa ODEFunction
         t = Inf
-        if !iip && typeof(prob.u0) <: Number
+        if !iip && prob.u0 isa Number
             f! = (du, u) -> (du .= prob.f(first(u), p, t); Cint(0))
-        elseif !iip && typeof(prob.u0) <: Vector{Float64}
+        elseif !iip && prob.u0 isa Vector{Float64}
             f! = (du, u) -> (du .= prob.f(u, p, t); Cint(0))
-        elseif !iip && typeof(prob.u0) <: AbstractArray
+        elseif !iip && prob.u0 isa AbstractArray
             f! = (du, u) -> (du .= vec(prob.f(reshape(u, sizeu), p, t)); Cint(0))
-        elseif typeof(prob.u0) <: Vector{Float64}
+        elseif prob.u0 isa Vector{Float64}
             f! = (du, u) -> prob.f(du, u, p, t)
         else # Then it's an in-place function on an abstract array
             f! = (du, u) -> (prob.f(reshape(du, sizeu), reshape(u, sizeu), p, t);
             du = vec(du);
             0)
         end
-    elseif typeof(prob.f) <: NonlinearFunction
-        if !iip && typeof(prob.u0) <: Number
+    elseif prob.f isa NonlinearFunction
+        if !iip && prob.u0 isa Number
             f! = (du, u) -> (du .= prob.f(first(u), p); Cint(0))
-        elseif !iip && typeof(prob.u0) <: Vector{Float64}
+        elseif !iip && prob.u0 isa Vector{Float64}
             f! = (du, u) -> (du .= prob.f(u, p); Cint(0))
-        elseif !iip && typeof(prob.u0) <: AbstractArray
+        elseif !iip && prob.u0 isa AbstractArray
             f! = (du, u) -> (du .= vec(prob.f(reshape(u, sizeu), p)); Cint(0))
-        elseif typeof(prob.u0) <: Vector{Float64}
+        elseif prob.u0 isa Vector{Float64}
             f! = (du, u) -> prob.f(du, u, p)
         else # Then it's an in-place function on an abstract array
             f! = (du, u) -> (prob.f(reshape(du, sizeu), reshape(u, sizeu), p);
@@ -65,13 +65,13 @@ function SciMLBase.__solve(prob::Union{SciMLBase.AbstractSteadyStateProblem,
     f!(resid, u0)
 
     if SciMLBase.has_jac(prob.f)
-        if !iip && typeof(prob.u0) <: Number
+        if !iip && prob.u0 isa Number
             g! = (du, u) -> (du .= prob.f.jac(first(u), p); Cint(0))
-        elseif !iip && typeof(prob.u0) <: Vector{T} where {T <: Number}
+        elseif !iip && prob.u0 isa Vector{T} where {T <: Number}
             g! = (du, u) -> (du .= prob.f.jac(u, p); Cint(0))
-        elseif !iip && typeof(prob.u0) <: AbstractArray
+        elseif !iip && prob.u0 isa AbstractArray
             g! = (du, u) -> (du .= vec(prob.f.jac(reshape(u, sizeu), p)); Cint(0))
-        elseif typeof(prob.u0) <: Vector{T} where {T <: Number}
+        elseif prob.u0 isa Vector{T} where {T <: Number}
             g! = (du, u) -> prob.f.jac(du, u, p)
         else # Then it's an in-place function on an abstract array
             g! = (du, u) -> (prob.f.jac(reshape(du, sizeu), reshape(u, sizeu), p);
